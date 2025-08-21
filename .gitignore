@@ -1,1 +1,4 @@
 venv-inner-code/
+my-venv/
+plan-venv/
+.env
