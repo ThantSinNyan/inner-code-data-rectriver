@@ -1,13 +1,23 @@
 import pickle
 import numpy as np
 import faiss
-from sentence_transformers import SentenceTransformer
+from openai import OpenAI
+import os
+from dotenv import load_dotenv
 
-_model = SentenceTransformer("all-MiniLM-L6-v2")
+load_dotenv()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+EMBED_MODEL = "text-embedding-3-small"  # OpenAI embedding model
 
 
 def embed_chunks(chunks: list[str]) -> np.ndarray:
-    return _model.encode(chunks, convert_to_numpy=True)
+    """Generate embeddings using OpenAI for a list of text chunks."""
+    embeddings = []
+    for chunk in chunks:
+        resp = client.embeddings.create(model=EMBED_MODEL, input=chunk)
+        embeddings.append(resp.data[0].embedding)
+    return np.array(embeddings, dtype=np.float32)
 
 
 def save_embeddings(embeddings, chunks, file_path: str):
@@ -31,6 +41,8 @@ def create_faiss_index(embeddings: np.ndarray):
 
 
 def search_index(index, query: str, top_k: int = 5) -> list[int]:
-    query_vec = _model.encode([query], convert_to_numpy=True)
+    """Search FAISS index using OpenAI embedding for the query."""
+    resp = client.embeddings.create(model=EMBED_MODEL, input=query)
+    query_vec = np.array([resp.data[0].embedding], dtype=np.float32)
     distances, indices = index.search(query_vec, top_k)
     return indices[0]
