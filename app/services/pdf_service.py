@@ -1,5 +1,4 @@
-import fitz  
-
+import fitz
 
 def extract_text_from_pdf(pdf_path: str) -> str:
     doc = fitz.open(pdf_path)
@@ -9,7 +8,8 @@ def extract_text_from_pdf(pdf_path: str) -> str:
     return text
 
 
-def chunk_text(text: str, max_len: int = 500) -> list[str]:
+def chunk_text(text: str, max_len: int = 200) -> list[str]:
+    """Split text into smaller chunks (word-based)."""
     words = text.split()
     chunks, chunk = [], []
     for word in words:

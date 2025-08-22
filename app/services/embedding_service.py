@@ -8,15 +8,13 @@ from dotenv import load_dotenv
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-EMBED_MODEL = "text-embedding-3-small"  # OpenAI embedding model
+EMBED_MODEL = "text-embedding-3-small"
 
 
 def embed_chunks(chunks: list[str]) -> np.ndarray:
-    """Generate embeddings using OpenAI for a list of text chunks."""
-    embeddings = []
-    for chunk in chunks:
-        resp = client.embeddings.create(model=EMBED_MODEL, input=chunk)
-        embeddings.append(resp.data[0].embedding)
+    """Batch embed chunks (fast)."""
+    resp = client.embeddings.create(model=EMBED_MODEL, input=chunks)
+    embeddings = [d.embedding for d in resp.data]
     return np.array(embeddings, dtype=np.float32)
 
 
@@ -40,8 +38,18 @@ def create_faiss_index(embeddings: np.ndarray):
     return index
 
 
+def save_faiss_index(index, file_path: str):
+    faiss.write_index(index, file_path)
+
+
+def load_faiss_index(file_path: str):
+    if os.path.exists(file_path):
+        return faiss.read_index(file_path)
+    return None
+
+
 def search_index(index, query: str, top_k: int = 5) -> list[int]:
-    """Search FAISS index using OpenAI embedding for the query."""
+    """Search FAISS index using query embedding."""
     resp = client.embeddings.create(model=EMBED_MODEL, input=query)
     query_vec = np.array([resp.data[0].embedding], dtype=np.float32)
     distances, indices = index.search(query_vec, top_k)
