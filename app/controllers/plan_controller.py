@@ -1,11 +1,13 @@
 from fastapi import APIRouter, HTTPException
 from app.models.plan_model import PlanRequest, PlanResponse
+from app.models.overview_model import OverviewResponse
 from app.services.pdf_service import extract_text_from_pdf, chunk_text
 from app.services.embedding_service import (
     load_embeddings, save_embeddings, embed_chunks,
     create_faiss_index, save_faiss_index, load_faiss_index, search_index
 )
-from app.services.llm_service import query_llm
+from app.services.healing_service import generate_healing_plan
+from app.services.overview_service import generate_overview
 import os
 
 router = APIRouter()
@@ -22,7 +24,7 @@ def _prepare_index():
     if embeddings is None or index is None:
         # First-time load
         text = extract_text_from_pdf(PDF_PATH)
-        chunks = chunk_text(text, max_len=200)  # smaller chunks → faster context
+        chunks = chunk_text(text, max_len=200)
         embeddings = embed_chunks(chunks)
         save_embeddings(embeddings, chunks, EMB_FILE)
 
@@ -36,12 +38,11 @@ def _prepare_index():
 def generate_plan(request: PlanRequest):
     embeddings, chunks, index = _prepare_index()
 
-    # Search with fewer chunks for speed
     indices = search_index(index, request.question, top_k=3)
     relevant_chunks = [chunks[i] for i in indices]
-
     context = "\n\n".join(relevant_chunks)
-    plan_list = query_llm(context, request.sign, request.house)
+
+    plan_list = generate_healing_plan(context, request.sign, request.house)
 
     if not plan_list:
         raise HTTPException(status_code=500, detail="LLM could not generate a valid plan")
@@ -52,3 +53,22 @@ def generate_plan(request: PlanRequest):
         plan=plan_list
     )
 
+
+@router.post("/generate_overview", response_model=OverviewResponse)
+def generate_overview_route(request: PlanRequest):
+    embeddings, chunks, index = _prepare_index()
+
+    indices = search_index(index, request.question, top_k=3)
+    relevant_chunks = [chunks[i] for i in indices]
+    context = "\n\n".join(relevant_chunks)
+
+    overview = generate_overview(context, request.sign, request.house)
+
+    if not overview:
+        raise HTTPException(status_code=500, detail="LLM could not generate a valid overview")
+
+    return OverviewResponse(
+        sign=request.sign,
+        house=request.house,
+        **overview
+    )
