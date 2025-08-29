@@ -5,7 +5,7 @@ python-dotenv==1.0.1
 openai==1.100.2
 PyMuPDF==1.26.3
 faiss-cpu==1.12.0
-numpy==2.3.2
+numpy==1.26.4
 gunicorn==20.1.0
 
 # New required libraries with specific versions
