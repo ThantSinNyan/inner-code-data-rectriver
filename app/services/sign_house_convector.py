@@ -4,7 +4,7 @@ from datetime import datetime
 import os
 
 # 1️⃣ Set ephemeris path at top-level
-EPHE_PATH = os.getenv("EPHE_PATH", "app/ephe")
+EPHE_PATH = os.getenv("EPHE_PATH", "ephe")
 EPHE_PATH = os.path.abspath(EPHE_PATH)
 swe.set_ephe_path(EPHE_PATH)
 

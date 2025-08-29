@@ -104,7 +104,8 @@ def generate_overview_route(request: PlanEndUserRequest):
     )
 
     sign = chiron_info["zodiac_sign"]
-    house = chiron_info["house"]
+    chiron_house = chiron_info["house"]
+    house=ordinal(chiron_house)
 
     # -----------------------------
     # Step 3: Prepare context and call generate_overview
@@ -127,3 +128,9 @@ def generate_overview_route(request: PlanEndUserRequest):
         house=house,
         **overview
     )
+def ordinal(n: int) -> str:
+    if 10 <= n % 100 <= 20:  # handles 11th, 12th, 13th, etc.
+        suffix = "th"
+    else:
+        suffix = {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
+    return f"{n}{suffix}"
