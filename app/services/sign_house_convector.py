@@ -3,13 +3,13 @@ import pytz
 from datetime import datetime
 import os
 
-
-EPHE_PATH = os.path.abspath(os.getenv("EPHE_PATH", "app/ephe"))
-
-if not os.path.exists(EPHE_PATH):
-    raise FileNotFoundError(f"Ephemeris folder not found: {EPHE_PATH}")
-
+# 1️⃣ Set ephemeris path at top-level
+EPHE_PATH = os.getenv("EPHE_PATH", "app/ephe")
+EPHE_PATH = os.path.abspath(EPHE_PATH)
 swe.set_ephe_path(EPHE_PATH)
+
+# Optional debug
+print("Ephemeris files:", os.listdir(EPHE_PATH))
 
 SIGNS = [
     'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
