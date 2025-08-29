@@ -7,6 +7,11 @@ class PlanRequest(BaseModel):
     house: str
     question: str
 
+class PlanEndUserRequest(BaseModel):
+    birthDate: str
+    birthTime: str
+    birthPlace: str
+    language: str
 
 class PlanResponse(BaseModel):
     plan: list

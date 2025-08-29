@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from app.models.plan_model import PlanRequest, PlanResponse
+from app.models.plan_model import PlanRequest, PlanResponse, PlanEndUserRequest
 from app.models.overview_model import OverviewResponse
 from app.services.pdf_service import extract_text_from_pdf, chunk_text
 from app.services.embedding_service import (
@@ -8,6 +8,9 @@ from app.services.embedding_service import (
 )
 from app.services.healing_service import generate_healing_plan
 from app.services.overview_service import generate_overview
+from app.services.sign_house_convector import calculate_chiron_position
+from app.services.location_convector import get_lat_lon_timezone
+
 import os
 
 router = APIRouter()
@@ -70,5 +73,57 @@ def generate_overview_route(request: PlanRequest):
     return OverviewResponse(
         sign=request.sign,
         house=request.house,
+        **overview
+    )
+
+@router.post("/generate_overview_end_user", response_model=OverviewResponse)
+def generate_overview_route(request: PlanEndUserRequest):
+    # -----------------------------
+    # Step 1: Convert birthPlace → city, country, lat/lon, timezone
+    # -----------------------------
+    # Expect user may type "City, Country" or just "City"
+    if ',' in request.birthPlace:
+        city_input, country_input = [x.strip() for x in request.birthPlace.split(',', 1)]
+    else:
+        city_input = request.birthPlace.strip()
+        country_input = ""  # Let service fuzzy match country if possible
+
+    loc_info = get_lat_lon_timezone(country_input, city_input)
+    if not loc_info:
+        raise HTTPException(status_code=400, detail="Could not resolve birthPlace to a valid location")
+
+    # -----------------------------
+    # Step 2: Calculate Chiron → sign and house
+    # -----------------------------
+    chiron_info = calculate_chiron_position(
+        birth_date=request.birthDate,
+        birth_time=request.birthTime,
+        timezone=loc_info["timezone_offset"],
+        latitude=loc_info["latitude"],
+        longitude=loc_info["longitude"]
+    )
+
+    sign = chiron_info["zodiac_sign"]
+    house = chiron_info["house"]
+
+    # -----------------------------
+    # Step 3: Prepare context and call generate_overview
+    # -----------------------------
+    # Example: _prepare_index() and search_index() assumed defined elsewhere
+    embeddings, chunks, index = _prepare_index()
+    indices = search_index(index, request.language, top_k=3)  # You may adjust search query
+    relevant_chunks = [chunks[i] for i in indices]
+    context = "\n\n".join(relevant_chunks)
+
+    overview = generate_overview(context, sign, house)
+    if not overview:
+        raise HTTPException(status_code=500, detail="LLM could not generate a valid overview")
+
+    # -----------------------------
+    # Step 4: Return response
+    # -----------------------------
+    return OverviewResponse(
+        sign=sign,
+        house=house,
         **overview
     )
