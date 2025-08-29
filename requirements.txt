@@ -19,7 +19,7 @@ numpy==2.3.2
 gunicorn==20.1.0
 
 # New required libraries with specific versions
-pyswisseph==2.10.04
+pyswisseph==2.10.3.2
 rapidfuzz==3.3.1
 geopy==2.3.0
 geonamescache==2.3.0
