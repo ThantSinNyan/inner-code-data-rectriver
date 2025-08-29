@@ -7,3 +7,21 @@ PyMuPDF==1.26.3
 faiss-cpu==1.12.0
 numpy==2.3.2
 gunicorn==20.1.0
+
+fastapi==0.116.1
+uvicorn==0.35.0
+pydantic==2.11.7
+python-dotenv==1.0.1
+openai==1.100.2
+PyMuPDF==1.26.3
+faiss-cpu==1.12.0
+numpy==2.3.2
+gunicorn==20.1.0
+
+# New required libraries with specific versions
+pyswisseph==2.10.04
+rapidfuzz==3.3.1
+geopy==2.3.0
+geonamescache==2.3.0
+timezonefinder==6.1.8
+pytz==2023.3
