@@ -3,12 +3,15 @@ import pytz
 from datetime import datetime
 import os
 
-EPHE_PATH = os.path.join(os.path.dirname(__file__), "..", "ephe")
-EPHE_PATH = os.path.abspath(EPHE_PATH)
+# Absolute path to ephe folder inside Heroku dyno
+EPHE_PATH = os.path.join(os.getcwd(), "ephe")
 
+# Debug prints
+print(">>> Using EPHE_PATH:", EPHE_PATH)
+print(">>> Files:", os.listdir(EPHE_PATH))
+
+# Set path before any Swiss Ephemeris function is called
 swe.set_ephe_path(EPHE_PATH)
-print(">>> EPHE_PATH:", EPHE_PATH)
-print(">>> Files:", os.listdir(EPHE_PATH) if os.path.exists(EPHE_PATH) else "MISSING")
 
 SIGNS = [
     'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
