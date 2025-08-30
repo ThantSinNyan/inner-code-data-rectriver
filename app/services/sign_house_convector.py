@@ -3,14 +3,9 @@ import pytz
 from datetime import datetime
 import os
 
-# Absolute path to ephe folder inside Heroku dyno
-EPHE_PATH = os.path.join(os.getcwd(), "ephe")
-
-# Debug prints
+EPHE_PATH = "/app/ephe"
 print(">>> Using EPHE_PATH:", EPHE_PATH)
 print(">>> Files:", os.listdir(EPHE_PATH))
-
-# Set path before any Swiss Ephemeris function is called
 swe.set_ephe_path(EPHE_PATH)
 
 SIGNS = [
