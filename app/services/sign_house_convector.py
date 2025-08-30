@@ -6,7 +6,7 @@ import os
 EPHE_PATH = os.path.join(os.path.dirname(__file__), "..", "ephe")
 EPHE_PATH = os.path.abspath(EPHE_PATH)
 
-swe.set_ephe_path(EPHE_PATH)
+swe.set_ephe_path("/app/ephe")
 print(">>> EPHE_PATH:", EPHE_PATH)
 print(">>> Files:", os.listdir(EPHE_PATH) if os.path.exists(EPHE_PATH) else "MISSING")
 
