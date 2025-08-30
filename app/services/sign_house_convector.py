@@ -3,14 +3,11 @@ import pytz
 from datetime import datetime
 import os
 
-# 1️⃣ Set ephemeris path at top-level
-EPHE_PATH = os.path.join(os.getcwd(), "ephe")
+EPHE_PATH = os.path.join(os.path.dirname(__file__), "..", "ephe")
+EPHE_PATH = os.path.abspath(EPHE_PATH)
 
-# Tell Swiss Ephemeris where to find the .se1 files
 swe.set_ephe_path(EPHE_PATH)
 
-# Optional debug
-print("Ephemeris files:", os.listdir(EPHE_PATH))
 
 SIGNS = [
     'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
