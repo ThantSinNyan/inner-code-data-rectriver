@@ -57,6 +57,7 @@ def calculate_chiron_position(
         dt_utc.day,
         dt_utc.hour + dt_utc.minute / 60.0
     )
+    swe.set_ephe_path(EPHE_PATH)
 
     # Step 3: Chiron position
     chiron_data, _ = swe.calc_ut(jd_ut, swe.CHIRON)
