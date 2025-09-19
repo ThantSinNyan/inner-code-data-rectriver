@@ -3,7 +3,7 @@ import pytz
 from datetime import datetime
 import os
 
-EPHE_PATH = "/app/ephe"
+EPHE_PATH = "./app/ephe"
 print(">>> Using EPHE_PATH:", EPHE_PATH)
 print(">>> Files:", os.listdir(EPHE_PATH))
 swe.set_ephe_path(EPHE_PATH)
