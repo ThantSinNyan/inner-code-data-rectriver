@@ -40,10 +40,13 @@ def _prepare_index():
 @router.post("/generate_plan", response_model=PlanResponse)
 def generate_plan(request: PlanRequest):
     embeddings, chunks, index = _prepare_index()
-
-    indices = search_index(index, request.question, top_k=3)
-    relevant_chunks = [chunks[i] for i in indices]
-    context = "\n\n".join(relevant_chunks)
+    questionForSign="Chiron in "+request.sign+ "House, Life Area Focus Extra Daily, Prompt, meditation"
+    questionForHouse=request.house +"House, Life Area Focus Extra Daily, Prompt, meditation"
+    indicesSign = search_index(index, questionForSign, top_k=2)
+    indicesHouse = search_index(index, questionForHouse, top_k=2)
+    relevant_chunks_sign = [chunks[i] for i in indicesSign]
+    relevant_chunks_house = [chunks[i] for i in indicesHouse]
+    context = "\n\n".join(relevant_chunks_sign + relevant_chunks_house)
 
     plan_list = generate_healing_plan(context, request.sign, request.house)
 
@@ -60,10 +63,13 @@ def generate_plan(request: PlanRequest):
 @router.post("/generate_overview", response_model=OverviewResponse)
 def generate_overview_route(request: PlanRequest):
     embeddings, chunks, index = _prepare_index()
-
-    indices = search_index(index, request.question, top_k=3)
-    relevant_chunks = [chunks[i] for i in indices]
-    context = "\n\n".join(relevant_chunks)
+    questionForSign="Chiron in "+request.sign+ "House, Life Area Focus Extra Daily, Prompt, meditation"
+    questionForHouse=request.house +"House, Life Area Focus Extra Daily, Prompt, meditation"
+    indicesSign = search_index(index, questionForSign, top_k=2)
+    indicesHouse = search_index(index, questionForHouse, top_k=2)
+    relevant_chunks_sign = [chunks[i] for i in indicesSign]
+    relevant_chunks_house = [chunks[i] for i in indicesHouse]
+    context = "\n\n".join(relevant_chunks_sign + relevant_chunks_house)
 
     overview = generate_overview(context, request.sign, request.house)
 
