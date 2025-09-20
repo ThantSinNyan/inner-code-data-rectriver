@@ -84,10 +84,7 @@ def generate_overview_route(request: PlanRequest):
 
 @router.post("/generate_overview_end_user", response_model=OverviewResponse)
 def generate_overview_route(request: PlanEndUserRequest):
-    # -----------------------------
     # Step 1: Convert birthPlace → city, country, lat/lon, timezone
-    # -----------------------------
-    # Expect user may type "City, Country" or just "City"
     if ',' in request.birthPlace:
         city_input, country_input = [x.strip() for x in request.birthPlace.split(',', 1)]
     else:
@@ -98,9 +95,7 @@ def generate_overview_route(request: PlanEndUserRequest):
     if not loc_info:
         raise HTTPException(status_code=400, detail="Could not resolve birthPlace to a valid location")
 
-    # -----------------------------
     # Step 2: Calculate Chiron → sign and house
-    # -----------------------------
     chiron_info = calculate_chiron_position(
         birth_date=request.birthDate,
         birth_time=request.birthTime,
@@ -113,12 +108,9 @@ def generate_overview_route(request: PlanEndUserRequest):
     chiron_house = chiron_info["house"]
     house=ordinal(chiron_house)
 
-    # -----------------------------
     # Step 3: Prepare context and call generate_overview
-    # -----------------------------
-    # Example: _prepare_index() and search_index() assumed defined elsewhere
     embeddings, chunks, index = _prepare_index()
-    indices = search_index(index, request.language, top_k=3)  # You may adjust search query
+    indices = search_index(index, request.language, top_k=3) 
     relevant_chunks = [chunks[i] for i in indices]
     context = "\n\n".join(relevant_chunks)
 
@@ -126,9 +118,7 @@ def generate_overview_route(request: PlanEndUserRequest):
     if not overview:
         raise HTTPException(status_code=500, detail="LLM could not generate a valid overview")
 
-    # -----------------------------
     # Step 4: Return response
-    # -----------------------------
     return OverviewResponse(
         sign=sign,
         house=house,
