@@ -6,6 +6,7 @@ class PlanRequest(BaseModel):
     sign: str
     house: str
     question: str
+    language: str
 
 class PlanEndUserRequest(BaseModel):
     birthDate: str

@@ -13,4 +13,5 @@ class OverviewResponse(BaseModel):
     patternsConnectedToThisWound: List[str]
     healingBenefits: List[str]
     reflectiveQuestions: List[str]
+  
     

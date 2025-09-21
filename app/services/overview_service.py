@@ -32,13 +32,12 @@ Notes for writing:
 """
 
 
-def generate_overview(context: str, sign: str, house: str):
+def generate_overview(context: str, sign: str, house: str, language: str):
     prompt = PROMPT_TEMPLATE.format(context=context, sign=sign, house=house)
     data = query_llm_overview(prompt)
     if not data:
         return None
 
-    # Normalize structure
     return {
         "description": data.get("description", ""),
         "coreWoundsAndEmotionalThemes": data.get("coreWoundsAndEmotionalThemes", []),

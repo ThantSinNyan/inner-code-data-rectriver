@@ -71,7 +71,7 @@ def generate_overview_route(request: PlanRequest):
     relevant_chunks_house = [chunks[i] for i in indicesHouse]
     context = "\n\n".join(relevant_chunks_sign + relevant_chunks_house)
 
-    overview = generate_overview(context, request.sign, request.house)
+    overview = generate_overview(context, request.sign, request.house, request.language)
 
     if not overview:
         raise HTTPException(status_code=500, detail="LLM could not generate a valid overview")
