@@ -17,7 +17,7 @@ Each item in the array represents one day and must include:
 - "activity": (string, title of the main activity)
 - "prompts": (array of unique journaling prompts, no duplicates in each day)
 - "meditation": (string, title of a meditation practice)
-- "affirmation": (a positive affirmation that helps release or rewire negative wound patterns, transforming them into empowering and positive beliefs)
+- "affirmation": (short setence that is a positive affirmation that helps release or rewire negative wound patterns, transforming them into empowering and positive beliefs)
 
 Context:
 {context}
@@ -27,7 +27,7 @@ Notes for writing:
 - For "overview": Provide a deep, reflective summary that connects the wound to the day’s healing focus.  
 - For "prompts": Write insightful, open-ended journaling prompts — no duplicates within a single day.  
 - For "meditation": Use the exact meditation name provided in the context (do not change or invent new ones).
-- For "affirmation": Write insightful— no duplicates within a single day.    
+- For "affirmation": Write short note insightful— no duplicates within a single day.    
 - Ensure the JSON is valid and remove duplicate prompts.
 """
 
